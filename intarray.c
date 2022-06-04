@@ -10,10 +10,10 @@ intarray intarray_create(int len){
     printf("We create an array with %d length.\n",STANDARD_TAB_LENGTH);
     len = STANDARD_TAB_LENGTH;
   }
-  intarray p = malloc(sizeof(struct _intarray));
+  intarray p = tools_malloc(sizeof(struct _intarray));
   p->len=len;
   p->alloc=len;
-  p->data = malloc(sizeof(int)*len);
+  p->data = tools_malloc(sizeof(int)*len);
   int i;
   for(int i=0;i<len;i++){
     p->data[i]=0;
@@ -41,10 +41,10 @@ intarray empty_intarray_create(int alloc){
     printf("We create an array with %d length.\n",STANDARD_TAB_LENGTH);
     alloc = STANDARD_TAB_ALLOC;
   }
-  intarray p = malloc(sizeof(struct _intarray));
+  intarray p = tools_malloc(sizeof(struct _intarray));
   p->len=0;
   p->alloc=alloc;
-  p->data = malloc(sizeof(int)*alloc);
+  p->data = tools_malloc(sizeof(int)*alloc);
   int i;
   for(int i=0;i<alloc;i++){
     p->data[i]=0;
@@ -60,8 +60,8 @@ intarray standard_empty_intarray_create(void){
 }
 // free the memory allocated for both the intarray and data array
 void intarray_destroy(intarray tab){
-  free(tab->data);
-  free(tab);
+  tools_free(tab->data,sizeof(int)*tab->alloc);
+  tools_free(tab,sizeof(struct _intarray));
 }
 // get the element in the data array at the position index
 int intarray_get(intarray tab, int index){
@@ -108,12 +108,13 @@ void intarray_add(intarray tab, int value){
 }
 // resize the  array with 2*old_alloc+1
 void intarray_resise(intarray tab, int new_alloc){
-  int* new_data = malloc(sizeof(int)*new_alloc);
+  int* new_data = tools_malloc(sizeof(int)*new_alloc);
   for(int i=0;i<tab->len;i++){
     new_data[i]=tab->data[i];
   }
   tab->alloc=new_alloc;
-  free(tab->data);
+  //tools_free(tab->data);
+  tools_free(tab->data,sizeof(int)*tab->alloc);
   tab->data = new_data;
 
 }
@@ -272,7 +273,7 @@ void UNSORTED_intarray_delete(intarray tab, int index){
 }
 void from_char_intarray(intarray tab, char** charTab, int length){
   for(int i=1,j=0;i<length;i++){
-    int* ok = malloc(sizeof(int));
+    int* ok = tools_malloc(sizeof(int));
     int integer = safe_string_to_int(charTab[i],ok);
     if(*ok==1){
       intarray_add(tab,integer);

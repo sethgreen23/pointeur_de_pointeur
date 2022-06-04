@@ -1,6 +1,26 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "tools.h"
+// pour detecter une fuite de memoire
+// on compte la quantite de memoire allower
+void tools_memory_init(void){
+  GLOBAL_ALLOC_MEMORY=0;
+}
+// compte la quantite de momoire
+//void* est un pointeur sur une donnee qu'on ne connait pas le type
+void* tools_malloc(int alloc){
+  void* ptr = malloc(alloc);
+  GLOBAL_ALLOC_MEMORY+=alloc;
+  return ptr;
+}
+void tools_free(void* ptr, int alloc){
+  free(ptr);
+  GLOBAL_ALLOC_MEMORY-=alloc;
+}
+void tools_memory_check_at_end_of_app(void){
+  if(GLOBAL_ALLOC_MEMORY!=0)
+    printf("Ce programme a une ou des fuite de memoire. %d octets n'ont pas ete libere.",GLOBAL_ALLOC_MEMORY);
+}
 // interchange the values of two variables
 void interchange_values(int* p, int* c){
   int interchange;
